@@ -1,0 +1,15 @@
+JAQUE · PUBLICACIÓN EN GITHUB PAGES
+
+1. Crea un repositorio en GitHub, por ejemplo `jaque-ajedrez`, y elige público.
+2. Sube todos los archivos de esta carpeta a la raíz del repositorio, incluida la carpeta `.github/workflows`.
+3. En GitHub, abre Settings > Pages y elige `GitHub Actions` como fuente.
+4. Abre Actions y espera a que termine `Deploy Jaque to GitHub Pages`.
+5. GitHub mostrará la URL pública en Settings > Pages (normalmente https://TU-USUARIO.github.io/jaque-ajedrez/).
+
+Contenido:
+- index.html: aplicación
+- manifest.webmanifest, app-icon.svg y sw.js: instalación PWA
+- overlay.html: overlay de streaming
+- .github/workflows/pages.yml: despliegue automático al actualizar `main`
+
+Mantén estos archivos juntos en la raíz; el sitio usa rutas relativas. La partida y ajustes se guardan en el navegador. El motor de ajedrez y la sección de preguntas necesitan conexión a internet. La emisión real y la autenticación de YouTube/Twitch/TikTok requieren integración adicional y credenciales; esta versión abre los paneles oficiales y prepara el contenido, pero no transmite directamente.

@@ -1,0 +1,13 @@
+{
+  "name": "Jaque — Ajedrez",
+  "short_name": "Jaque",
+  "description": "Juega, analiza y prepara tus directos de ajedrez.",
+  "lang": "es",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#101714",
+  "theme_color": "#101714",
+  "icons": [{ "src": "./app-icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }]
+}
