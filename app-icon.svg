@@ -1,5 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <rect width="512" height="512" rx="112" fill="#101714"/>
-  <rect x="34" y="34" width="444" height="444" rx="96" fill="#b5ef6a"/>
-  <text x="256" y="353" text-anchor="middle" font-size="330" font-family="serif" fill="#1a2817">♞</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title">
+  <title id="title">Jaque — Ajedrez</title>
+  <circle cx="256" cy="256" r="246" fill="#fff" stroke="#080808" stroke-width="11"/>
+  <text x="256" y="307" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="106" letter-spacing="-7" fill="#050505">JAQUE</text>
+  <text x="119" y="241" text-anchor="middle" font-family="serif" font-size="118" fill="#050505" transform="rotate(-34 119 241)">♚</text>
+  <text x="395" y="232" text-anchor="middle" font-family="serif" font-size="107" fill="#fff" stroke="#777" stroke-width="1.2" paint-order="stroke" transform="rotate(24 395 232)">♔</text>
 </svg>
+
