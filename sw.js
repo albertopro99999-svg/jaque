@@ -1,4 +1,4 @@
-const CACHE = 'jaque-shell-v2';
+const CACHE = 'jaque-shell-v3';
 const SHELL = ['./', './manifest.webmanifest', './app-icon.svg', './overlay.html'];
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(SHELL)).then(() => self.skipWaiting()));
@@ -21,3 +21,4 @@ self.addEventListener('fetch', event => {
     return response;
   }).catch(() => caches.match('./'))));
 });
+
