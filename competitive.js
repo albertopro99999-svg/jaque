@@ -95,6 +95,8 @@
     profile.name = $('competitiveName').value.trim().slice(0, 24) || 'Jugador';
     saveProfile();
   });
+  $('quickMatchBtn').onclick = () => window.JaqueOnline.quickMatch();
+  $('stopQuickMatchBtn').onclick = () => window.JaqueOnline.stopQuickMatch();
   $('createRankedRoom').onclick = () => window.JaqueOnline.startPeer('host', '');
   $('joinRankedRoom').onclick = () => {
     const raw = $('joinRankedId').value.trim();
