@@ -1,4 +1,4 @@
-const CACHE = 'jaque-shell-v7';
+const CACHE = 'jaque-shell-v8';
 const SHELL = ['./', './manifest.webmanifest', './app-icon.svg', './overlay.html'];
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(SHELL)).then(() => self.skipWaiting()));
@@ -21,4 +21,5 @@ self.addEventListener('fetch', event => {
     return response;
   }).catch(() => new Response('', { status: 503, statusText: 'Offline' }))));
 });
+
 
