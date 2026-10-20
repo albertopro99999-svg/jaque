@@ -50,6 +50,7 @@
     $('rankName').textContent = current.name;
     $('rankIcon').textContent = current.icon;
     $('rankIcon').style.color = current.color;
+    $('rankOverview').style.setProperty('--rank-current', current.color);
     $('rankProgressFill').style.width = progress + '%';
     $('rankProgressLabel').textContent = next ? `${Math.max(0, next.min - profile.elo)} Elo para ${next.name}` : 'Rango máximo alcanzado';
     $('rankRecord').textContent = `${profile.wins} V · ${profile.draws} T · ${profile.losses} D`;
