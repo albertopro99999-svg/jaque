@@ -76,7 +76,7 @@
       const range = upper ? `${rank.min.toLocaleString('es-AR')}–${(upper - 1).toLocaleString('es-AR')}` : `${rank.min.toLocaleString('es-AR')}+`;
       const badge = rank.image
         ? `<img class="rank-badge-image" src="${escapeHtml(rank.image)}" alt="">`
-        : `<span class="rank-step-glyph">${rank.icon}</span><small class="rank-badge-hint">INSIGNIA</small>`;
+        : `<span class="rank-step-glyph">${rank.icon}</span>`;
       return `<article class="rank-step ${state}" style="--rank-color:${rank.color}" data-rank-slot="${rank.key}"><div class="rank-step-art" aria-hidden="true">${badge}</div><div class="rank-step-copy"><div class="rank-step-heading"><strong>${rank.name}</strong><span class="rank-state-label">${stateText}</span></div><small>${range} Elo</small></div></article>`;
     }).join('');
     $('rankHistory').innerHTML = profile.history.length ? profile.history.map(item => {
