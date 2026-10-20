@@ -23,7 +23,14 @@
         wins: Math.max(0, Number.parseInt(saved.wins, 10) || 0),
         draws: Math.max(0, Number.parseInt(saved.draws, 10) || 0),
         losses: Math.max(0, Number.parseInt(saved.losses, 10) || 0),
-        history: Array.isArray(saved.history) ? saved.history.slice(0, 12) : []
+        history: Array.isArray(saved.history)
+          ? saved.history.filter(item => item && typeof item === 'object' && ['win', 'draw', 'loss'].includes(item.result) && Number.isFinite(Number(item.change))).slice(0, 12).map(item => ({
+            result: item.result,
+            change: Math.round(Number(item.change)),
+            opponent: String(item.opponent || 'Rival').slice(0, 24),
+            at: Number.isFinite(Number(item.at)) ? Number(item.at) : Date.now()
+          }))
+          : []
       };
     } catch {
       return freshProfile();
@@ -139,4 +146,5 @@
   window.JaqueCompetitive = { playerData, recordResult, render };
   render();
 })();
+
 
