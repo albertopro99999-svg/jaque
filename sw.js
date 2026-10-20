@@ -1,4 +1,4 @@
-const CACHE = 'jaque-shell-v4';
+const CACHE = 'jaque-shell-v5';
 const SHELL = ['./', './manifest.webmanifest', './app-icon.svg', './overlay.html'];
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(SHELL)).then(() => self.skipWaiting()));
