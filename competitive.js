@@ -62,9 +62,9 @@
     progressBar.setAttribute('aria-valuemin', String(current.min));
     progressBar.setAttribute('aria-valuemax', String(next ? next.min : current.min));
     progressBar.setAttribute('aria-valuenow', String(profile.elo));
-    progressBar.setAttribute('aria-valuetext', next ? `${profile.elo} de ${next.min} Elo; ${Math.max(0, next.min - profile.elo)} para ${next.name}` : 'Rango máximo alcanzado');
+    progressBar.setAttribute('aria-valuetext', next ? `${profile.elo} Elo; tramo ${current.min} a ${next.min} Elo; ${Math.max(0, next.min - profile.elo)} para ${next.name}` : 'Rango máximo alcanzado');
     $('rankProgressFill').style.width = progress + '%';
-    $('rankProgressLabel').textContent = next ? `${profile.elo.toLocaleString('es-AR')} / ${next.min.toLocaleString('es-AR')} Elo · ${Math.max(0, next.min - profile.elo).toLocaleString('es-AR')} para ${next.name}` : 'Rango máximo alcanzado';
+    $('rankProgressLabel').textContent = next ? `Tramo ${current.min.toLocaleString('es-AR')}–${next.min.toLocaleString('es-AR')} Elo · ${Math.max(0, next.min - profile.elo).toLocaleString('es-AR')} para ${next.name}` : 'Rango máximo alcanzado';
     $('rankProgressPercent').textContent = `${Math.round(progress)}%`;
     $('rankRecord').textContent = `${profile.wins} V · ${profile.draws} T · ${profile.losses} D`;
     $('rankedMatches').textContent = `${profile.wins + profile.draws + profile.losses} partidas clasificatorias`;
