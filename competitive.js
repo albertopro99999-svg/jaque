@@ -4,13 +4,14 @@
   const STORAGE_KEY = 'jaque-competitive-profile-v1';
   const K_FACTOR = 32;
   const ranks = [
-    { key: 'bronce', name: 'Bronce', min: 100, image: null, icon: '♟', color: '#b97850' },
-    { key: 'plata', name: 'Plata', min: 1200, image: null, icon: '♞', color: '#b9c6cf' },
-    { key: 'oro', name: 'Oro', min: 1400, image: null, icon: '♝', color: '#e5bd55' },
-    { key: 'platino', name: 'Platino', min: 1600, image: null, icon: '♜', color: '#65d4c2' },
-    { key: 'experto', name: 'Experto', min: 1800, image: null, icon: '♛', color: '#bca0f4' },
-    { key: 'jaquers', name: 'Jaquers', min: 2000, image: null, icon: '♚', color: '#b5ef6a' }
+    { key: 'bronce', name: 'Bronce', min: 100, image: './assets/rank-bronce.png.b64', icon: '♟', color: '#b97850' },
+    { key: 'plata', name: 'Plata', min: 1200, image: './assets/rank-plata.png.b64', icon: '♞', color: '#b9c6cf' },
+    { key: 'oro', name: 'Oro', min: 1400, image: './assets/rank-oro.png.b64', icon: '♝', color: '#e5bd55' },
+    { key: 'platino', name: 'Platino', min: 1600, image: './assets/rank-platino.png.b64', icon: '♜', color: '#65d4c2' },
+    { key: 'experto', name: 'Experto', min: 1800, image: './assets/rank-experto.png.b64', icon: '♛', color: '#bca0f4' },
+    { key: 'jaquers', name: 'Jaquers', min: 2000, image: './assets/rank-jaquers.png.b64', icon: '♚', color: '#b5ef6a' }
   ];
+  const rankArtwork = Object.create(null);
 
   const freshProfile = () => ({ name: 'Jugador', elo: 1000, wins: 0, draws: 0, losses: 0, history: [] });
   function loadProfile() {
@@ -55,7 +56,9 @@
     $('competitiveName').value = profile.name;
     $('eloValue').textContent = profile.elo.toLocaleString('es-AR');
     $('rankName').textContent = current.name;
-    $('rankIcon').textContent = current.icon;
+    $('rankIcon').innerHTML = rankArtwork[current.key]
+      ? `<img class="rank-current-image" src="${rankArtwork[current.key]}" alt="Insignia de rango ${escapeHtml(current.name)}">`
+      : current.icon;
     $('rankIcon').style.color = current.color;
     $('rankOverview').style.setProperty('--rank-current', current.color);
     const progressBar = $('rankProgress');
@@ -74,10 +77,10 @@
       const state = active ? 'current' : rankIndex < index ? 'passed' : 'upcoming';
       const stateText = active ? 'Tu rango' : state === 'passed' ? 'Superado' : 'Por alcanzar';
       const range = upper ? `${rank.min.toLocaleString('es-AR')}–${(upper - 1).toLocaleString('es-AR')}` : `${rank.min.toLocaleString('es-AR')}+`;
-      const badge = rank.image
-        ? `<img class="rank-badge-image" src="${escapeHtml(rank.image)}" alt="">`
+      const badge = rankArtwork[rank.key]
+        ? `<img class="rank-badge-image" src="${rankArtwork[rank.key]}" alt="">`
         : `<span class="rank-step-glyph">${rank.icon}</span>`;
-      return `<article class="rank-step ${state}" style="--rank-color:${rank.color}" data-rank-slot="${rank.key}"><div class="rank-step-art" aria-hidden="true">${badge}</div><div class="rank-step-copy"><div class="rank-step-heading"><strong>${rank.name}</strong><span class="rank-state-label">${stateText}</span></div><small>${range} Elo</small></div></article>`;
+      return `<article class="rank-step ${state}" style="--rank-color:${rank.color}" data-rank-slot="${rank.key}"><div class="rank-step-art${rankArtwork[rank.key] ? ' has-image' : ''}" aria-hidden="true">${badge}</div><div class="rank-step-copy"><div class="rank-step-heading"><strong>${rank.name}</strong><span class="rank-state-label">${stateText}</span></div><small>${range} Elo</small></div></article>`;
     }).join('');
     $('rankHistory').innerHTML = profile.history.length ? profile.history.map(item => {
       const mark = item.result === 'win' ? 'Victoria' : item.result === 'draw' ? 'Tablas' : 'Derrota';
@@ -151,6 +154,15 @@
 
   window.JaqueCompetitive = { playerData, recordResult, render };
   render();
+  Promise.all(ranks.map(async rank => {
+    try {
+      const response = await fetch(rank.image);
+      if (!response.ok) return;
+      const base64 = (await response.text()).trim();
+      if (/^[A-Za-z0-9+/]+={0,2}$/.test(base64)) rankArtwork[rank.key] = `data:image/png;base64,${base64}`;
+    } catch {}
+  })).then(render);
 })();
+
 
 
