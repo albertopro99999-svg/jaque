@@ -4,12 +4,12 @@
   const STORAGE_KEY = 'jaque-competitive-profile-v1';
   const K_FACTOR = 32;
   const ranks = [
-    { name: 'Bronce', min: 100, icon: '♟', color: '#b97850' },
-    { name: 'Plata', min: 1200, icon: '♞', color: '#b9c6cf' },
-    { name: 'Oro', min: 1400, icon: '♝', color: '#e5bd55' },
-    { name: 'Platino', min: 1600, icon: '♜', color: '#65d4c2' },
-    { name: 'Experto', min: 1800, icon: '♛', color: '#bca0f4' },
-    { name: 'Jaquers', min: 2000, icon: '♚', color: '#b5ef6a' }
+    { key: 'bronce', name: 'Bronce', min: 100, image: null, icon: '♟', color: '#b97850' },
+    { key: 'plata', name: 'Plata', min: 1200, image: null, icon: '♞', color: '#b9c6cf' },
+    { key: 'oro', name: 'Oro', min: 1400, image: null, icon: '♝', color: '#e5bd55' },
+    { key: 'platino', name: 'Platino', min: 1600, image: null, icon: '♜', color: '#65d4c2' },
+    { key: 'experto', name: 'Experto', min: 1800, image: null, icon: '♛', color: '#bca0f4' },
+    { key: 'jaquers', name: 'Jaquers', min: 2000, image: null, icon: '♚', color: '#b5ef6a' }
   ];
 
   const freshProfile = () => ({ name: 'Jugador', elo: 1000, wins: 0, draws: 0, losses: 0, history: [] });
@@ -54,10 +54,16 @@
     $('rankProgressLabel').textContent = next ? `${Math.max(0, next.min - profile.elo)} Elo para ${next.name}` : 'Rango máximo alcanzado';
     $('rankRecord').textContent = `${profile.wins} V · ${profile.draws} T · ${profile.losses} D`;
     $('rankedMatches').textContent = `${profile.wins + profile.draws + profile.losses} partidas clasificatorias`;
-    $('rankLadder').innerHTML = ranks.map(rank => {
-      const upper = ranks[ranks.indexOf(rank) + 1]?.min;
+    $('rankLadder').innerHTML = ranks.map((rank, rankIndex) => {
+      const upper = ranks[rankIndex + 1]?.min;
       const active = current.name === rank.name;
-      return `<div class="rank-step${active ? ' active' : ''}"><span class="rank-step-icon" style="--rank-color:${rank.color}">${rank.icon}</span><span><strong>${rank.name}</strong><small>${rank.min}${upper ? `–${upper - 1}` : '+'} Elo</small></span>${active ? '<b>ACTUAL</b>' : ''}</div>`;
+      const state = active ? 'current' : rankIndex < index ? 'passed' : 'upcoming';
+      const stateText = active ? 'Tu rango' : state === 'passed' ? 'Superado' : 'Por alcanzar';
+      const range = upper ? `${rank.min.toLocaleString('es-AR')}–${(upper - 1).toLocaleString('es-AR')}` : `${rank.min.toLocaleString('es-AR')}+`;
+      const badge = rank.image
+        ? `<img class="rank-badge-image" src="${escapeHtml(rank.image)}" alt="">`
+        : `<span class="rank-step-glyph">${rank.icon}</span><small class="rank-badge-hint">INSIGNIA</small>`;
+      return `<article class="rank-step ${state}" style="--rank-color:${rank.color}" data-rank-slot="${rank.key}"><div class="rank-step-art" aria-hidden="true">${badge}</div><div class="rank-step-copy"><div class="rank-step-heading"><strong>${rank.name}</strong><span class="rank-state-label">${stateText}</span></div><small>${range} Elo</small></div></article>`;
     }).join('');
     $('rankHistory').innerHTML = profile.history.length ? profile.history.map(item => {
       const mark = item.result === 'win' ? 'Victoria' : item.result === 'draw' ? 'Tablas' : 'Derrota';
