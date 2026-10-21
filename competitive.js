@@ -12,6 +12,7 @@
     { key: 'jaquers', name: 'Jaquers', min: 2000, reward: 200, image: './assets/rank-jaquers.png.b64', icon: '♚', color: '#b5ef6a' }
   ];
   const rankArtwork = Object.create(null);
+  let jaqwinnLogo = '';
 
   const freshProfile = () => ({ name: 'Jugador', elo: 1000, jaqwinn: 0, wins: 0, draws: 0, losses: 0, history: [] });
   function loadProfile() {
@@ -73,6 +74,7 @@
     $('rankRecord').textContent = `${profile.wins} V · ${profile.draws} T · ${profile.losses} D`;
     $('rankedMatches').textContent = `${profile.wins + profile.draws + profile.losses} partidas clasificatorias`;
     $('jaqwinnBalance').textContent = profile.jaqwinn.toLocaleString('es-AR');
+    if (jaqwinnLogo) { $('jaqwinnLogo').src = jaqwinnLogo; $('jaqwinnLogo').hidden = false; }
     $('jaqwinnReward').textContent = `+${current.reward} por partida competitiva en ${current.name}`;
     $('rankLadder').innerHTML = ranks.map((rank, rankIndex) => {
       const upper = ranks[rankIndex + 1]?.min;
@@ -167,6 +169,13 @@
       if (/^[A-Za-z0-9+/]+={0,2}$/.test(base64)) rankArtwork[rank.key] = `data:image/png;base64,${base64}`;
     } catch {}
   })).then(render);
+  fetch('./assets/jaqwinn-logo.png.b64').then(response => {
+    if (!response.ok) throw new Error('No se pudo cargar el logo');
+    return response.text();
+  }).then(value => {
+    const base64 = value.trim();
+    if (/^[A-Za-z0-9+/]+={0,2}$/.test(base64)) { jaqwinnLogo = `data:image/png;base64,${base64}`; render(); }
+  }).catch(() => {});
 })();
 
 
