@@ -4,16 +4,16 @@
   const STORAGE_KEY = 'jaque-competitive-profile-v1';
   const K_FACTOR = 32;
   const ranks = [
-    { key: 'bronce', name: 'Bronce', min: 100, image: './assets/rank-bronce.png.b64', icon: '♟', color: '#b97850' },
-    { key: 'plata', name: 'Plata', min: 1200, image: './assets/rank-plata.png.b64', icon: '♞', color: '#b9c6cf' },
-    { key: 'oro', name: 'Oro', min: 1400, image: './assets/rank-oro.png.b64', icon: '♝', color: '#e5bd55' },
-    { key: 'platino', name: 'Platino', min: 1600, image: './assets/rank-platino.png.b64', icon: '♜', color: '#65d4c2' },
-    { key: 'experto', name: 'Experto', min: 1800, image: './assets/rank-experto.png.b64', icon: '♛', color: '#bca0f4' },
-    { key: 'jaquers', name: 'Jaquers', min: 2000, image: './assets/rank-jaquers.png.b64', icon: '♚', color: '#b5ef6a' }
+    { key: 'bronce', name: 'Bronce', min: 100, reward: 10, image: './assets/rank-bronce.png.b64', icon: '♟', color: '#b97850' },
+    { key: 'plata', name: 'Plata', min: 1200, reward: 30, image: './assets/rank-plata.png.b64', icon: '♞', color: '#b9c6cf' },
+    { key: 'oro', name: 'Oro', min: 1400, reward: 60, image: './assets/rank-oro.png.b64', icon: '♝', color: '#e5bd55' },
+    { key: 'platino', name: 'Platino', min: 1600, reward: 100, image: './assets/rank-platino.png.b64', icon: '♜', color: '#65d4c2' },
+    { key: 'experto', name: 'Experto', min: 1800, reward: 120, image: './assets/rank-experto.png.b64', icon: '♛', color: '#bca0f4' },
+    { key: 'jaquers', name: 'Jaquers', min: 2000, reward: 200, image: './assets/rank-jaquers.png.b64', icon: '♚', color: '#b5ef6a' }
   ];
   const rankArtwork = Object.create(null);
 
-  const freshProfile = () => ({ name: 'Jugador', elo: 1000, wins: 0, draws: 0, losses: 0, history: [] });
+  const freshProfile = () => ({ name: 'Jugador', elo: 1000, jaqwinn: 0, wins: 0, draws: 0, losses: 0, history: [] });
   function loadProfile() {
     try {
       const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
@@ -21,6 +21,7 @@
       return {
         name: String(saved.name || 'Jugador').trim().slice(0, 24) || 'Jugador',
         elo: Number.isFinite(+saved.elo) ? Math.max(100, Math.min(4000, Math.round(+saved.elo))) : 1000,
+        jaqwinn: Number.isFinite(+saved.jaqwinn) ? Math.max(0, Math.min(1000000000, Math.floor(+saved.jaqwinn))) : 0,
         wins: Math.max(0, Number.parseInt(saved.wins, 10) || 0),
         draws: Math.max(0, Number.parseInt(saved.draws, 10) || 0),
         losses: Math.max(0, Number.parseInt(saved.losses, 10) || 0),
@@ -71,6 +72,8 @@
     $('rankProgressPercent').textContent = `${Math.round(progress)}%`;
     $('rankRecord').textContent = `${profile.wins} V · ${profile.draws} T · ${profile.losses} D`;
     $('rankedMatches').textContent = `${profile.wins + profile.draws + profile.losses} partidas clasificatorias`;
+    $('jaqwinnBalance').textContent = profile.jaqwinn.toLocaleString('es-AR');
+    $('jaqwinnReward').textContent = `+${current.reward} por partida competitiva en ${current.name}`;
     $('rankLadder').innerHTML = ranks.map((rank, rankIndex) => {
       const upper = ranks[rankIndex + 1]?.min;
       const active = current.name === rank.name;
@@ -85,7 +88,7 @@
     $('rankHistory').innerHTML = profile.history.length ? profile.history.map(item => {
       const mark = item.result === 'win' ? 'Victoria' : item.result === 'draw' ? 'Tablas' : 'Derrota';
       const sign = item.change > 0 ? '+' : '';
-      return `<div class="rank-history-row"><span>${mark} <small>vs. ${escapeHtml(item.opponent || 'Rival')}</small></span><strong>${sign}${item.change} Elo</strong></div>`;
+      return `<div class="rank-history-row"><span>${mark} <small>vs. ${escapeHtml(item.opponent || 'Rival')}</small></span><strong>${sign}${item.change} Elo <small>+${Number(item.jaqwinn) || 0} Jaqwinn</small></strong></div>`;
     }).join('') : '<div class="rank-history-empty">Tus resultados aparecerán aquí al terminar partidas clasificatorias.</div>';
   }
 
@@ -96,17 +99,19 @@
     const rival = Math.max(100, Math.min(4000, Math.round(Number(opponentRating) || 1000)));
     const expected = 1 / (1 + Math.pow(10, (rival - profile.elo) / 400));
     const before = profile.elo;
+    const reward = rankFor(before).reward;
     const change = Math.round(K_FACTOR * (score - expected));
     profile.elo = Math.max(100, before + change);
+    profile.jaqwinn = Math.min(1000000000, profile.jaqwinn + reward);
     if (score === 1) profile.wins++;
     else if (score === 0.5) profile.draws++;
     else profile.losses++;
-    profile.history.unshift({ result: score === 1 ? 'win' : score === 0.5 ? 'draw' : 'loss', change: profile.elo - before, opponent: String(opponentName || 'Rival').slice(0, 24), at: Date.now() });
+    profile.history.unshift({ result: score === 1 ? 'win' : score === 0.5 ? 'draw' : 'loss', change: profile.elo - before, jaqwinn: reward, opponent: String(opponentName || 'Rival').slice(0, 24), at: Date.now() });
     profile.history = profile.history.slice(0, 12);
     saveProfile();
     const newRank = rankFor(profile.elo).name;
     const oldRank = rankFor(before).name;
-    window.JaqueOnline.say(`Resultado guardado: ${change > 0 ? '+' : ''}${profile.elo - before} Elo · ${newRank}${oldRank !== newRank ? ` ¡Subiste a ${newRank}!` : ''}`);
+    window.JaqueOnline.say(`Resultado guardado: ${change > 0 ? '+' : ''}${profile.elo - before} Elo · +${reward} Jaqwinn · ${newRank}${oldRank !== newRank ? ` ¡Subiste a ${newRank}!` : ''}`);
   }
 
   function enterCompetitive() {
